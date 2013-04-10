@@ -82,12 +82,11 @@ CREATE TABLE IF NOT EXISTS finance.transaction(
 		ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET=utf8;
 
-CREATE TABLE IF NOT EXISTS tag(
+CREATE TABLE IF NOT EXISTS finance.tag(
 	id_tag INT UNSIGNED NOT NULL AUTO_INCREMENT,
 	id_user INT UNSIGNED NOT NULL,
 	description VARCHAR(50),
-	PRIMARY KEY (id_tag),
-	UNIQUE KEY uk__tag__user(id_tag, id_user),
+	PRIMARY KEY (id_tag, id_user),
 	INDEX idx__tag__user(id_user),
 	CONSTRAINT fk__tag__user
 		FOREIGN KEY (id_user)
@@ -95,7 +94,7 @@ CREATE TABLE IF NOT EXISTS tag(
 		ON UPDATE CASCADE ON DELETE CASCADE	
 ) ENGINE=InnoDB CHARACTER SET=utf8;
 
-CREATE TABLE IF NOT EXISTS transaction_tag( 
+CREATE TABLE IF NOT EXISTS finance.transaction_tag( 
 	id_transaction INT UNSIGNED NOT NULL,
 	id_tag INT UNSIGNED NOT NULL,
 	id_user INT UNSIGNED NOT NULL,
@@ -112,11 +111,11 @@ CREATE TABLE IF NOT EXISTS transaction_tag(
 ) ENGINE=InnoDB CHARACTER SET=utf8;
 
 
-CREATE TABLE IF NOT EXISTS threshold(
+CREATE TABLE IF NOT EXISTS finance.threshold(
 	id_threshold INT UNSIGNED NOT NULL,
-	id_user INT UNSIGNED NOT NULL,
 	id_tag INT UNSIGNED NULL,
 	id_category INT UNSIGNED NULL,
+	id_user INT UNSIGNED NOT NULL,
 	amount DECIMAL(12,4) NOT NULL,
 	PRIMARY KEY(id_threshold),
 	UNIQUE uk__threshold__user(id_threshold, id_user),
@@ -134,7 +133,7 @@ CREATE TABLE IF NOT EXISTS threshold(
 		ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET=utf8;
 
-CREATE TABLE IF NOT EXISTS threshold_project(
+CREATE TABLE IF NOT EXISTS finance.threshold_project(
 	id_threshold INT UNSIGNED NOT NULL,
 	id_project INT UNSIGNED NOT NULL,
 	id_user INT UNSIGNED NOT NULL,
@@ -148,5 +147,31 @@ CREATE TABLE IF NOT EXISTS threshold_project(
 		FOREIGN KEY(id_project, id_user) REFERENCES finance.project(id_project, id_user)
 		ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB CHARACTER SET=utf8;
-/**/
 
+CREATE TABLE IF NOT EXISTS finance.balance_cache(
+	id_project INT UNSIGNED NOT NULL,
+	id_user INT UNSIGNED NOT NULL,
+	month TINYINT UNSIGNED NOT NULL,
+	year SMALLINT UNSIGNED NOT NULL,
+	amount DECIMAL(12, 4) NOT NULL DEFAULT 0,
+	PRIMARY KEY(id_project, id_user, month, year),
+	INDEX idx__balance_cache__project(id_project, id_user),
+	INDEX idx__balance_cache__date(month, year),
+	CONSTRAINT fk__balance_cache__project
+		FOREIGN KEY (id_project, id_user) REFERENCES finance.project(id_project, id_user)
+		ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS finance.tag_cache(
+	id_tag INT UNSIGNED NOT NULL,
+	id_user INT UNSIGNED NOT NULL,
+	month TINYINT UNSIGNED NOT NULL,
+	year SMALLINT UNSIGNED NOT NULL,
+	amount DECIMAL(12, 4) NOT NULL DEFAULT 0,
+	PRIMARY KEY(id_tag, id_user, month, year),
+	INDEX idx__tag_cache__tag(id_tag, id_user),
+	INDEX idx__tag_cache__date(month, year),
+	CONSTRAINT fk__tag_cache__tag
+		FOREIGN KEY (id_tag, id_user) REFERENCES finance.tag(id_tag, id_user)
+		ON UPDATE CASCADE ON DELETE CASCADE
+);
