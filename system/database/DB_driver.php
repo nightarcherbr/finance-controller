@@ -507,6 +507,7 @@ class CI_DB_driver {
 		}
 
 		$this->trans_begin($test_mode);
+		$this->_trans_depth += 1;
 	}
 
 	// --------------------------------------------------------------------
@@ -517,7 +518,7 @@ class CI_DB_driver {
 	 * @access	public
 	 * @return	bool
 	 */
-	function trans_complete()
+	function trans_complete($success = true)
 	{
 		if ( ! $this->trans_enabled)
 		{
@@ -529,6 +530,8 @@ class CI_DB_driver {
 		{
 			$this->_trans_depth -= 1;
 			return TRUE;
+		}elseif($this->_trans_depth==1){
+			$this->_trans_depth -= 1;
 		}
 
 		// The query() function will set this flag to FALSE in the event that a query failed
