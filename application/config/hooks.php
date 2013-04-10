@@ -9,7 +9,13 @@
 |	http://codeigniter.com/user_guide/general/hooks.html
 |
 */
-
+$hook['post_controller_constructor'][] = array(
+	'class'    => 'AuthHook',
+	'function' => 'verify',
+	'filename' => 'AuthHook.php',
+	'filepath' => 'hooks',
+	'params'   => null
+);
 
 
 /* End of file hooks.php */

@@ -1,11 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Controller_User extends CI_Controller{
-	/**
-	 * Exibe o formulário de cadastro
-	 */
-	public function form($id = false){
-		$this->template->build('user_form');
+require(APPPATH.'/libraries/SkipAuth.php');
+class Controller_Login extends CI_Controller implements SkipAuth {
+	public function __construct(){
+		parent::__construct();
+		$this->load->library('authentication');
+		$this->authentication->keep_redirect();
 	}
 
 	/**
@@ -28,18 +28,6 @@ class Controller_User extends CI_Controller{
 
 		if( !empty($auth) ) redirect('login');
 		else redirect('/');
-	}
-	
-	/**
-	 * Grava as alteracoes de um usuario
-	 */
-	public function save(){
-		$username = $this->input->get_post('username');
-		try{
-		
-		}catch(Exception $ex){
-		
-		}
 	}
 
 	/**

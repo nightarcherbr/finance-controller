@@ -41,6 +41,9 @@
 $route['default_controller'] = "controller_finance";
 $route['404_override'] = 'controller_finance/not_found';
 
+$route['login'] = "controller_login/login";
+$route['logout'] = "controller_login/logout";
+
 $route['(?!controller_)(.*)'] = "controller_$1";
 
 
